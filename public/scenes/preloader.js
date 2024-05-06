@@ -5,9 +5,6 @@ export class Preloader extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('ship', '../assets/spaceShips_001.png');
-        this.load.image('otherPlayer', '../assets/enemyBlack5.png');
-        this.load.image('star', '../assets/star_gold.png');
     }
 
     create() {
