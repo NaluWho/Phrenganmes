@@ -15,11 +15,7 @@ export class SoloTierListScene extends Phaser.Scene {
         
         this.height = this.cameras.main.height;
         this.width = this.cameras.main.width;
-        this.tierRectHeight = this.height*0.11; // Use 0.13 for 5 tiers, 0.11 for 6 tiers
-        var heightOffset = this.tierRectHeight*0.35;
-        if (this.tierRectHeight == this.height*0.13) {
-            heightOffset = 0;
-        }
+        this.tierRectHeight = this.height*0.11;
         
         this.socket.on('newSoloTier', function (players) {
             self.allPlayers = players;
@@ -33,7 +29,7 @@ export class SoloTierListScene extends Phaser.Scene {
             for (const user in self.allPlayers) {
                 if (self.allPlayers[user].playerName != "") {
                     var rectX = 0.09*widthOffset;
-                    self.createDraggableRect(self.allPlayers[user].playerName, heightOffset);
+                    self.createDraggableRect(self.allPlayers[user].playerName, 0);
                     widthOffset++;
                 }
             }
@@ -80,28 +76,24 @@ export class SoloTierListScene extends Phaser.Scene {
         }
     }
 
-    createDraggableRect(userName, heightOffset) {
-        const rect1 = this.add.rectangle(0, 0, this.width*0.09, this.tierRectHeight, 0x303030).setOrigin(0.45, 0.58);
+    createDraggableRect(userName, offsetX) {
+        var tierRectWidth = this.width*0.09;
+        var offsetY = 84;
+        const rect1 = this.add.rectangle(offsetX, offsetY, tierRectWidth, this.tierRectHeight, 0x303030).setOrigin(0.45, 0.5);
 
         var usernamesConfig = { fontSize: '12px', color:'#ffffff', fontFamily: 'Arial', textAlign: 'center' };
-        var user1 = this.add.text(0, 0, userName, usernamesConfig).setOrigin(0.45, 0.75);
+        var user1 = this.add.text(offsetX, offsetY, userName, usernamesConfig).setOrigin(0.45, 0.5);
 
         var cont1 = this.add.container(this.width/2, this.tierRectHeight*7, [rect1, user1]);
         cont1.setSize(200,200);
 
-        // For less tiers subtract multiplier constant
-        var heightMax = this.tierRectHeight*8+heightOffset;
-        if (heightOffset == 0) {
-            heightMax = this.tierRectHeight*7;
-        }
-
         cont1.setInteractive({ draggable: true });
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-            dragX = Phaser.Math.Snap.To(dragX, this.width*0.09);
-            dragY = Phaser.Math.Snap.To(dragY, this.tierRectHeight, heightOffset, false);
+            dragX = Phaser.Math.Snap.To(dragX, tierRectWidth);
+            dragY = Phaser.Math.Snap.To(dragY, this.tierRectHeight);
 
-            dragX = Phaser.Math.Clamp(dragX, this.width*0.18, this.width*0.9);
-            dragY = Phaser.Math.Clamp(dragY, this.tierRectHeight*2+heightOffset, heightMax);
+            dragX = Phaser.Math.Clamp(dragX, tierRectWidth*2+offsetX, tierRectWidth*10+offsetX);
+            dragY = Phaser.Math.Clamp(dragY, this.tierRectHeight, this.tierRectHeight*7);
             gameObject.setPosition(dragX, dragY);
         });
     }
