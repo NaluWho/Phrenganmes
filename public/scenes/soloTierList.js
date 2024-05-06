@@ -15,21 +15,25 @@ export class SoloTierListScene extends Phaser.Scene {
         
         this.height = this.cameras.main.height;
         this.width = this.cameras.main.width;
-        this.tierRectHeight = this.height*0.13;
+        this.tierRectHeight = this.height*0.11; // Use 0.13 for 5 tiers, 0.11 for 6 tiers
+        var heightOffset = this.tierRectHeight*0.35;
+        if (this.tierRectHeight == this.height*0.13) {
+            heightOffset = 0;
+        }
         
         this.socket.on('newSoloTier', function (players) {
             self.allPlayers = players;
+            self.allPlayers["socketIdEx"] = {playerName: "testUser"}; // For testing
 
             // Tier Rectangles
             self.createTierLayout();
 
             // Create Draggable Rect for each Player
             var widthOffset = 0;
-            console.log("All Players: ", self.allPlayers);
             for (const user in self.allPlayers) {
                 if (self.allPlayers[user].playerName != "") {
                     var rectX = 0.09*widthOffset;
-                    self.createDraggableRect(rectX, self.allPlayers[user].playerName);
+                    self.createDraggableRect(self.allPlayers[user].playerName, heightOffset);
                     widthOffset++;
                 }
             }
@@ -46,7 +50,6 @@ export class SoloTierListScene extends Phaser.Scene {
         var startY = this.height/4;
 
         // Tier Rectangles
-        console.log("In create tiers");
         var tierRectColor = 0xadadad;
         for (let i = 0; i < numberOfTiers; i++) {
             if (i % 2 == 0) {
@@ -77,22 +80,28 @@ export class SoloTierListScene extends Phaser.Scene {
         }
     }
 
-    createDraggableRect(playerBoxStartX, userName) {
+    createDraggableRect(userName, heightOffset) {
         const rect1 = this.add.rectangle(0, 0, this.width*0.09, this.tierRectHeight, 0x303030).setOrigin(0.45, 0.58);
 
         var usernamesConfig = { fontSize: '12px', color:'#ffffff', fontFamily: 'Arial', textAlign: 'center' };
         var user1 = this.add.text(0, 0, userName, usernamesConfig).setOrigin(0.45, 0.75);
 
-        var cont1 = this.add.container(this.width/2, this.height*0.91, [rect1, user1]);
+        var cont1 = this.add.container(this.width/2, this.tierRectHeight*7, [rect1, user1]);
         cont1.setSize(200,200);
+
+        // For less tiers subtract multiplier constant
+        var heightMax = this.tierRectHeight*8+heightOffset;
+        if (heightOffset == 0) {
+            heightMax = this.tierRectHeight*7;
+        }
 
         cont1.setInteractive({ draggable: true });
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
             dragX = Phaser.Math.Snap.To(dragX, this.width*0.09);
-            dragY = Phaser.Math.Snap.To(dragY, this.height*0.13);
+            dragY = Phaser.Math.Snap.To(dragY, this.tierRectHeight, heightOffset, false);
 
             dragX = Phaser.Math.Clamp(dragX, this.width*0.18, this.width*0.9);
-            dragY = Phaser.Math.Clamp(dragY, this.height*0.26, this.height*0.91);
+            dragY = Phaser.Math.Clamp(dragY, this.tierRectHeight*2+heightOffset, heightMax);
             gameObject.setPosition(dragX, dragY);
         });
     }
