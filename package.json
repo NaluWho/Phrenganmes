@@ -1,0 +1,19 @@
+{
+  "name": "phaser_tut2",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Scott Westover",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "keywords": [],
+  "description": "Tierlist Your Friends",
+  "devDependencies": {
+    "@azerion/phaser-input": "^2.0.5"
+  }
+}
