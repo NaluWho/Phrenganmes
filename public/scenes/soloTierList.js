@@ -26,10 +26,12 @@ export class SoloTierListScene extends Phaser.Scene {
 
             // Create Draggable Rect for each Player
             var widthOffset = 0;
+            var rectXoffset = 0;
             for (const user in self.allPlayers) {
                 if (self.allPlayers[user].playerName != "") {
-                    var rectX = 0.09*widthOffset;
-                    self.createDraggableRect(self.allPlayers[user].playerName, 0);
+                    rectXoffset = self.width*0.09*widthOffset;
+                    console.log("Offset: ", rectXoffset, self.width, widthOffset);
+                    self.createDraggableRect(self.allPlayers[user].playerName, rectXoffset);
                     widthOffset++;
                 }
             }
@@ -79,21 +81,21 @@ export class SoloTierListScene extends Phaser.Scene {
     createDraggableRect(userName, offsetX) {
         var tierRectWidth = this.width*0.09;
         var offsetY = 84;
-        const rect1 = this.add.rectangle(offsetX, offsetY, tierRectWidth, this.tierRectHeight, 0x303030).setOrigin(0.45, 0.5);
+        const rect1 = this.add.rectangle(0, 0, tierRectWidth, this.tierRectHeight, 0x303030).setOrigin(0.45, 0.5);
 
         var usernamesConfig = { fontSize: '12px', color:'#ffffff', fontFamily: 'Arial', textAlign: 'center' };
-        var user1 = this.add.text(offsetX, offsetY, userName, usernamesConfig).setOrigin(0.45, 0.5);
+        var user1 = this.add.text(0, 0, userName, usernamesConfig).setOrigin(0.45, 0.5);
 
-        var cont1 = this.add.container(this.width/2, this.tierRectHeight*7, [rect1, user1]);
-        cont1.setSize(200,200);
+        var cont1 = this.add.container(tierRectWidth*2+offsetX, this.tierRectHeight*7+offsetY, [rect1, user1]);
+        cont1.setSize(tierRectWidth, this.tierRectHeight);
 
         cont1.setInteractive({ draggable: true });
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
             dragX = Phaser.Math.Snap.To(dragX, tierRectWidth);
-            dragY = Phaser.Math.Snap.To(dragY, this.tierRectHeight);
+            dragY = Phaser.Math.Snap.To(dragY, this.tierRectHeight, offsetY);
 
-            dragX = Phaser.Math.Clamp(dragX, tierRectWidth*2+offsetX, tierRectWidth*10+offsetX);
-            dragY = Phaser.Math.Clamp(dragY, this.tierRectHeight, this.tierRectHeight*7);
+            dragX = Phaser.Math.Clamp(dragX, tierRectWidth*4-offsetX, tierRectWidth*12-offsetX);
+            dragY = Phaser.Math.Clamp(dragY, this.tierRectHeight+offsetY, this.tierRectHeight*7+offsetY);
             gameObject.setPosition(dragX, dragY);
         });
     }
