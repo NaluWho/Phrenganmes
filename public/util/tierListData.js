@@ -54,7 +54,6 @@ class TierListData {
             console.log("ERROR: ", name, " not in name dictionary.")
         }
         var tierListArr = this.getTierListArrayByLetter(this.nameToTier[name]);
-        console.log("Tier to remove from: ", tierListArr);
         tierListArr.splice(index, 1);
     }
 }

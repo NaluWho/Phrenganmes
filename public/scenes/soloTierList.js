@@ -99,10 +99,12 @@ export class SoloTierListScene extends Phaser.Scene {
             dragX = Phaser.Math.Snap.To(dragX, this.tierRectWidth);
             dragY = Phaser.Math.Snap.To(dragY, this.tierRectHeight, this.offsetY);
 
-            dragX = Phaser.Math.Clamp(dragX, this.tierRectWidth*3-offsetX, this.tierRectWidth*11-offsetX);
-            // TODO: Clamp to left most spot
-            // dragX = Phaser.Math.Clamp(dragX, this.tierRectWidth*3-offsetX, this.tierRectWidth*11-offsetX);
             dragY = Phaser.Math.Clamp(dragY, this.tierRectHeight+this.offsetY, this.tierRectHeight*7+this.offsetY);
+            // TODO: Clamp to left most spot
+            var tier = this.getTierFromY(dragY);
+            var newRightClamp = this.tierListData.getTierListArrayByLetter(tier).length + 3;
+            dragX = Phaser.Math.Clamp(dragX, this.tierRectWidth*3-offsetX, this.tierRectWidth*newRightClamp-offsetX);
+            // dragX = Phaser.Math.Clamp(dragX, this.tierRectWidth*3-offsetX, this.tierRectWidth*11-offsetX);
             gameObject.setPosition(dragX, dragY);
         });
         
@@ -113,7 +115,6 @@ export class SoloTierListScene extends Phaser.Scene {
             if (newTier) {
                 // var givenUsername = this.getUserNameFromPointer(gameObject);
                 var givenUsername = gameObject.list[1]._text;
-                console.log("Given Username from Pointer: ", givenUsername);
                 this.tierListData.removeFromTier(givenUsername, oldIndex);
                 this.tierListData.addToTier(newTier, givenUsername, newIndex);
             }
