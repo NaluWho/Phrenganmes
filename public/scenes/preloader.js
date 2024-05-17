@@ -10,8 +10,8 @@ export class Preloader extends Phaser.Scene {
     create() {
         console.log('Preloader...');
 
-        // this.scene.start("Title");
-        this.scene.start("SoloTierList"); // FOR TESTING
+        this.scene.start("Title");
+        // this.scene.start("SoloTierList"); // FOR TESTING
     }
 
   
