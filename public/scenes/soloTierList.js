@@ -102,9 +102,9 @@ export class SoloTierListScene extends Phaser.Scene {
             dragY = Phaser.Math.Clamp(dragY, this.tierRectHeight+this.offsetY, this.tierRectHeight*7+this.offsetY);
             // TODO: Clamp to left most spot
             var tier = this.getTierFromY(dragY);
-            var newRightClamp = this.tierListData.getTierListArrayByLetter(tier).length + 3;
-            dragX = Phaser.Math.Clamp(dragX, this.tierRectWidth*3-offsetX, this.tierRectWidth*newRightClamp-offsetX);
-            // dragX = Phaser.Math.Clamp(dragX, this.tierRectWidth*3-offsetX, this.tierRectWidth*11-offsetX);
+            var newRightClamp = this.tierListData.getTierListArrayByLetter(tier).length + 2;
+            console.log("OffsetX: ", offsetX);
+            dragX = Phaser.Math.Clamp(dragX, this.tierRectWidth*2, this.tierRectWidth*newRightClamp);
             gameObject.setPosition(dragX, dragY);
         });
         
