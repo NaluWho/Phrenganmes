@@ -107,37 +107,35 @@ export class SoloTierListScene extends Phaser.Scene {
         });
         
         this.input.on('dragend', (pointer, gameObject) => {
-            var newTier = this.getTierFromY(pointer.upY);
-            var newIndex = this.getIndexFromX(pointer.upX);
+            // TODO: Base newTier and newIndex off gameObjectContainer instead of Mouse
+            var newTier = this.getTierFromY(gameObject.y);
+            var newIndex = this.getIndexFromX(gameObject.x);
+            console.log("gameObject: ", gameObject);
             if (newTier) {
-                // var givenUsername = this.getUserNameFromPointer(gameObject);
                 var givenUsername = gameObject.list[1]._text;
                 if (!this.tierListData.getTierListArrayByLetter(newTier).includes(givenUsername)) {
+                    console.log("Tierlist: ", this.tierListData);
+
                     var oldIndex = this.getIndexFromX(pointer.downX);
                     this.tierListData.removeFromTier(givenUsername, oldIndex);
                     this.tierListData.addToTier(newTier, givenUsername, newIndex);
 
-                    // TODO: Move all rects in previous tier to new index positions
                     var oldTier = this.getTierFromY(pointer.downY);
                     var objectsInScene = gameObject.scene.children.list;
                     for (var objIndex in objectsInScene) {
                         var obj = objectsInScene[objIndex];
                         if (obj.type == "Container") {
-                            console.log("Obj Name: ", obj.list[1]._text);
                             var contName = obj.list[1]._text;
                             var contTier = this.tierListData.nameToTier[contName];
-                            console.log("Index and Index in Old: ", oldIndex, this.tierListData.getTierListArrayByLetter(contTier).indexOf(contName));
                             // If the container is in the old tier and the container's index was after the old index
                             if (contTier == oldTier 
                                 && oldIndex <= this.tierListData.getTierListArrayByLetter(contTier).indexOf(contName)) {
-                                console.log("Container matches old tier, moving: ", obj);
                                 obj.setX(obj.x - this.tierRectWidth);
                             }
                         }
                     }
                 }
             }
-            console.log("Tierlist: ", this.tierListData);
         });
 
     }
