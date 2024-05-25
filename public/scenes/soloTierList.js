@@ -111,12 +111,12 @@ export class SoloTierListScene extends Phaser.Scene {
         this.input.on('dragend', (pointer, gameObject) => {
             var newTier = this.getTierFromY(gameObject.y);
             var newIndex = this.getIndexFromX(gameObject.x);
+            var givenUsername = this.getUsernameFromContainer(gameObject);
 
-            if (newTier != "Untiered") { // TODO: will become redundant when rectObjByTiers done
+            if (userName == givenUsername) { // TODO: will become redundant when rectObjByTiers done
 
                 var oldIndex = this.getIndexFromX(gameObject.input.dragStartX);
                 var oldTier = this.getTierFromY(gameObject.input.dragStartY);
-                var givenUsername = this.getUsernameFromContainer(gameObject);
 
                 if (oldTier != newTier || oldIndex != newIndex) {
                     console.log("Tierlist: ", this.tierListData);
@@ -195,7 +195,6 @@ export class SoloTierListScene extends Phaser.Scene {
     }
 
     shiftRectsRight(newIndex, container, username) {
-        console.log("Shifting!");
         for (var i=0; i<this.rectContainers.length; i++) {
             var cont = this.rectContainers[i];
             var contName = this.getUsernameFromContainer(cont);
@@ -203,7 +202,8 @@ export class SoloTierListScene extends Phaser.Scene {
             // console.log("   Indices Equal?:", (newIndex <= this.getIndexFromX(cont.x)), "(", newIndex, "<=", this.getIndexFromX(cont.x), ")");
             // console.log("   Names Equal?:", (username != this.getUsernameFromContainer(cont)));
             if ((container != cont) && (newIndex <= this.getIndexFromX(cont.x)) && (username != contName)) {
-                console.log("User: ", username, " - Cont: ", cont);
+                console.log("contName: ", contName, " - this.rectContainers: ", this.rectContainers);
+                console.log("Shifting!");
                 cont.setX(cont.x + this.tierRectWidth);
                 // Update tierDict with new rankings
                 var tier = this.getTierFromY(cont.y);
