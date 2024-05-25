@@ -48,12 +48,13 @@ class TierListData {
         this.nameToTier[name] = tierLetter;
     }
 
-    // Remove a Name from a Tier given a name and index
-    removeFromTier(name, index) {
+    // Remove a Name from a Tier given a name
+    removeFromTier(name) {
         if (!this.nameToTier[name] && !this.untiered.includes(name)) {
             console.log("ERROR: ", name, " not in name dictionary.")
         }
         var tierListArr = this.getTierListArrayByLetter(this.nameToTier[name]);
-        tierListArr.splice(index, 1);
+        var nameIndex = tierListArr.indexOf(name);
+        tierListArr.splice(nameIndex, 1);
     }
 }
