@@ -124,7 +124,7 @@ export class SoloTierListScene extends Phaser.Scene {
                     // Shift other rectangles to right if placed ontop
                     if ((oldTier == newTier) && (newIndex < this.tierListData.getTierListArrayByLetter(newTier).length)) {
                         this.shiftRectsRight(newIndex, cont1, givenUsername);
-                    }
+                    } // TODO: add shift right for when newTier != oldTier
 
                     if (!this.tierListData.getTierListArrayByLetter(newTier).includes(givenUsername)) {
                         console.log("removing ", givenUsername, " from tier ", oldTier, "[", oldIndex, "]");
