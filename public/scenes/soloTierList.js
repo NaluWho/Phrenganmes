@@ -118,10 +118,9 @@ export class SoloTierListScene extends Phaser.Scene {
                 var oldTier = this.getTierFromY(gameObject.input.dragStartY);
 
                 if (oldTier != newTier || oldIndex != newIndex) {
-                    console.log("Tierlist: ", this.tierListData);
-                    var tierArrLength = this.tierListData.getTierListArrayByLetter(newTier).length;
+                    var newTierArrLength = this.tierListData.getTierListArrayByLetter(newTier).length;
                     // Shift other rectangles to right if placed ontop
-                    if (newIndex < tierArrLength) {
+                    if (newIndex < newTierArrLength) {
                         this.tierListData.removeFromTier(givenUsername)
                         this.tierListData.addToTier(newTier, givenUsername, newIndex);
                         this.shiftRectsRight(newTier, newIndex, givenUsername);
@@ -132,10 +131,12 @@ export class SoloTierListScene extends Phaser.Scene {
                     this.tierListData.addToTier(newTier, givenUsername, newIndex);
 
                     // Shift other rectangles to left if placed ontop or after
-                    if ((newTier == oldTier) && (newIndex > oldIndex)) {
-                        this.shiftRectsLeft(newTier, newIndex, givenUsername);
+                    var oldTierArrLength = this.tierListData.getTierListArrayByLetter(oldTier).length;
+                    if ((newTier != oldTier) && (oldIndex < oldTierArrLength) || ((newTier == oldTier) && (newIndex > oldIndex))) {
+                        this.shiftRectsLeft(oldTier, oldIndex, givenUsername);
                     }
                 }
+                console.log("Tierlist: ", this.tierListData);
             }
         });
         return cont1;
@@ -203,23 +204,19 @@ export class SoloTierListScene extends Phaser.Scene {
         }
     }
     
-    //TODO: fix dragging rect lower on tier
-    shiftRectsLeft(newTier, newIndex, username) {
+    shiftRectsLeft(oldTier, oldIndex, username) {
         for (var i=0; i<this.rectContainers.length; i++) {
             var cont = this.rectContainers[i];
             var contName = this.getUsernameFromContainer(cont);
             var contTier = this.tierListData.nameToTier[contName];
             var contIndex = this.tierListData.getTierListArrayByLetter(contTier).indexOf(contName);
-            console.log("   Tiers Equal?:", (contTier == newTier));
-            console.log("   Indices Equal?:", (newIndex >= contIndex), "(", newIndex, ">=", contIndex, ")");
+            console.log("   Tiers Equal?:", (contTier == oldTier));
+            console.log("   Indices Equal?:", (oldIndex <= contIndex), "(", oldIndex, "<=", contIndex, ")");
             console.log("   Names Not Equal?:", (username != contName));
             // If the container is in the old tier and the container's index was after the old index
-            if ((newIndex >= contIndex) && (username != contName) && (contTier == newTier)) {
+            if ((oldIndex <= contIndex) && (username != contName) && (contTier == oldTier)) {
                 console.log("Shift Left");
                 cont.setX(cont.x - this.tierRectWidth);
-                // Update tierDict with new rankings
-                this.tierListData.removeFromTier(contName)
-                this.tierListData.addToTier(contTier, contName, newIndex);
             }
         }
     }
