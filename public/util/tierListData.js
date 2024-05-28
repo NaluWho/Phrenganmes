@@ -36,15 +36,10 @@ class TierListData {
         }
     }
 
-    // Add a Name to a Tier (index is optional)
+    // Add a Name to a Tier
     addToTier(tierLetter, name, index) {
         var tierListArr = this.getTierListArrayByLetter(tierLetter);
-        if (!index) {
-            tierListArr.push(name);
-        }
-        else {
-            tierListArr.splice(index, 0, name);
-        }
+        tierListArr.splice(index, 0, name);
         this.nameToTier[name] = tierLetter;
     }
 
