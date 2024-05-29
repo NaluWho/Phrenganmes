@@ -103,6 +103,15 @@ export class SoloTierListScene extends Phaser.Scene {
 
             var tier = this.getTierFromY(dragY);
             var newRightClamp = this.tierListData.getTierListArrayByLetter(tier).length + 2;
+            // If dragging rect in same tier, don't allow extra room
+            var givenUsername = this.getUsernameFromContainer(gameObject);
+            if (userName == givenUsername) {
+                var newTier = this.tierListData.nameToTier[givenUsername];
+                if (tier == newTier) {
+                    console.log("Same Tier");
+                    newRightClamp -= 1;
+                }
+            }
             dragX = Phaser.Math.Clamp(dragX, this.tierRectWidth*2, this.tierRectWidth*newRightClamp);
             dragY = Phaser.Math.Clamp(dragY, this.tierRectHeight+this.offsetY, this.tierRectHeight*7+this.offsetY);
             gameObject.setPosition(dragX, dragY);
