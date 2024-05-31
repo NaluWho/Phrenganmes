@@ -103,18 +103,18 @@ export class SoloTierListScene extends Phaser.Scene {
 
             var tier = this.getTierFromY(dragY);
             var newRightClamp = this.tierListData.getTierListArrayByLetter(tier).length + 2;
+
             // If dragging rect in same tier, don't allow extra room
             var givenUsername = this.getUsernameFromContainer(gameObject);
             if (userName == givenUsername) {
                 var newTier = this.tierListData.nameToTier[givenUsername];
                 if (tier == newTier) {
-                    console.log("Same Tier");
                     newRightClamp -= 1;
                 }
+                dragX = Phaser.Math.Clamp(dragX, this.tierRectWidth*2, this.tierRectWidth*newRightClamp);
+                dragY = Phaser.Math.Clamp(dragY, this.tierRectHeight+this.offsetY, this.tierRectHeight*7+this.offsetY);
+                gameObject.setPosition(dragX, dragY);
             }
-            dragX = Phaser.Math.Clamp(dragX, this.tierRectWidth*2, this.tierRectWidth*newRightClamp);
-            dragY = Phaser.Math.Clamp(dragY, this.tierRectHeight+this.offsetY, this.tierRectHeight*7+this.offsetY);
-            gameObject.setPosition(dragX, dragY);
         });
         
         this.input.on('dragend', (pointer, gameObject) => {
@@ -129,8 +129,8 @@ export class SoloTierListScene extends Phaser.Scene {
                 if (oldTier != newTier || oldIndex != newIndex) {
                     var newTierArrLength = this.tierListData.getTierListArrayByLetter(newTier).length;
                     
-                    console.log("   removing ", givenUsername, " from tier ", oldTier, "[", oldIndex, "]");
-                    console.log("   adding ", givenUsername, " to tier ", newTier, "[", newIndex, "]");
+                    // console.log("   removing ", givenUsername, " from tier ", oldTier, "[", oldIndex, "]");
+                    // console.log("   adding ", givenUsername, " to tier ", newTier, "[", newIndex, "]");
                     this.tierListData.removeFromTier(givenUsername);
                     this.tierListData.addToTier(newTier, givenUsername, newIndex);
                     
@@ -219,10 +219,11 @@ export class SoloTierListScene extends Phaser.Scene {
             var contName = this.getUsernameFromContainer(cont);
             var contTier = this.tierListData.nameToTier[contName];
             var contIndex = this.tierListData.getTierListArrayByLetter(contTier).indexOf(contName);
+            var tierLength = this.tierListData.getTierListArrayByLetter(contTier).length;
             // console.log("   Tiers Equal?:", (contTier == oldTier));
             // console.log("   Indices Equal?:", (oldIndex <= contIndex), "(", oldIndex, "<=", contIndex, ")");
-            // console.log("   Names Not Equal?:", (username != contName));
-            // If the container is in the old tier and the container's index was after the old index
+            // console.log("   Indices v Len Equal?:", (contIndex >= tierLength), "(", contIndex, ">=", tierLength, ")");
+            // console.log("   Name?:", (contName));
             if ((oldIndex <= contIndex) && (username != contName) && (contTier == oldTier)) {
                 console.log("Shift Left");
                 cont.setX(cont.x - this.tierRectWidth);
