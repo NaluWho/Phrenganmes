@@ -272,6 +272,6 @@ export class SoloTierListScene extends Phaser.Scene {
     lockIn() {
         // TODO create next scene and function
         this.socket.emit("soloLockedIn", this.socket.id, this.tierListData);
-        this.scene.start("CalculatingResults");
+        this.scene.start("CombinedResults");
     }
 }

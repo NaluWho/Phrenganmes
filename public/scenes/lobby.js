@@ -20,7 +20,6 @@ export class LobbyScene extends Phaser.Scene {
         /*
             Key:    Socket Id (Int)
             Value: {
-                    playerId (Int)
                     playerName (String)
                     nameText (Text Object)
                     }
@@ -29,14 +28,14 @@ export class LobbyScene extends Phaser.Scene {
         
         this.socket.on('currentPlayers', function (players) {
             Object.keys(players).forEach(function (id) {
-                var player = {playerId: players[id].playerId, playerName: "", nameText: null};
-                self.allPlayers[players[id].playerId] = player;
+                var player = {playerName: "", nameText: null};
+                self.allPlayers[id] = player;
             });
             self.writeOtherPlayerNames("", self.socket.id, players);
         });
-        this.socket.on('newPlayer', function (playerInfo) {
+        this.socket.on('newPlayer', function (playerInfo, playerId) {
             var otherPlayer = playerInfo;
-            self.allPlayers[otherPlayer.playerId] = otherPlayer;
+            self.allPlayers[playerId] = otherPlayer;
         });
         this.socket.on('disconnectedUser', function (playerId, players) {
             console.log("Socket Disconnect (disconnectedUser)");

@@ -8,7 +8,6 @@ var io = new Server(server);
 /* 
   Key:  Socket Id (Int)
   Data:
-        playerId: Socket Id (Int)
         playerName: Name (String)
 */ 
 var players = {};
@@ -23,11 +22,10 @@ io.on('connection', function (socket) {
   console.log('a user connected: ', socket.id);
   // create a new player and add it to our players object
   players[socket.id] = {
-    playerId: socket.id,
     playerName: ""
   };
   socket.emit('currentPlayers', players);
-  socket.broadcast.emit('newPlayer', players[socket.id]);
+  socket.broadcast.emit('newPlayer', players[socket.id], socket.id);
 
   // when a player disconnects, remove them from our players object
   socket.on('disconnect', function () {

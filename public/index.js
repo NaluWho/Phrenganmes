@@ -2,6 +2,7 @@ import { Preloader } from './scenes/preloader.js';
 import { TitleScene } from './scenes/title.js';
 import { LobbyScene } from './scenes/lobby.js';
 import { SoloTierListScene } from './scenes/soloTierList.js';
+import { CombinedResults } from './scenes/combinedResults.js';
 
 var config = {
   title: "Tier Listing",
