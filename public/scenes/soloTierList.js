@@ -20,6 +20,16 @@ export class SoloTierListScene extends Phaser.Scene {
         this.tierRectWidth = this.width*0.09;
         this.offsetY = 84;
         this.rectContainers = [];
+
+        this.clickButton = this.add.text(this.width*0.5, this.height*0.9, 'Lock In', { fill: '#fff' })
+                            .setOrigin(0.5,0.5)
+                            .setInteractive()
+                            .on('pointerover', () => this.enterButtonHoverState() )
+                            .on('pointerout', () => this.enterButtonRestState() )
+                            .on('pointerup', function() {
+                                this.lockIn();
+                            }, this );
+        this.clickButton.visible = false;
         
         this.socket.on('newSoloTier', function (players) {
             self.allPlayers = players;
@@ -43,6 +53,7 @@ export class SoloTierListScene extends Phaser.Scene {
                     widthOffset++;
                 }
             }
+
         });
 
         // Prompt Text
@@ -144,6 +155,13 @@ export class SoloTierListScene extends Phaser.Scene {
                     if ((newTier != oldTier) && (oldIndex < oldTierArrLength) || ((newTier == oldTier) && (newIndex > oldIndex))) {
                         this.shiftRectsLeft(oldTier, oldIndex, givenUsername);
                     }
+                    
+                    // If all players tiered, allow finish
+                    if (this.tierListData.getTierListArrayByLetter().length == 0) {
+                        this.showLockInButton();
+                    } else {
+                        this.hideLockInButton();
+                    }
                 }
                 console.log("Tierlist: ", this.tierListData);
             }
@@ -233,5 +251,27 @@ export class SoloTierListScene extends Phaser.Scene {
 
     getUsernameFromContainer(cont) {
         return cont.list[1]._text;
+    }
+
+    showLockInButton() {
+        this.clickButton.visible = true;
+    }
+    
+    hideLockInButton() {
+        this.clickButton.visible = false;
+    }
+
+    enterButtonHoverState() {
+        this.clickButton.setStyle({ fill: '#ff0'});
+    }
+
+    enterButtonRestState() {
+        this.clickButton.setStyle({ fill: '#0f0' });
+    }
+
+    lockIn() {
+        // TODO create next scene and function
+        this.socket.emit("soloLockedIn", this.socket.id, this.tierListData);
+        this.scene.start("CalculatingResults");
     }
 }
