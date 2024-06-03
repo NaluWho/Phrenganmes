@@ -17,7 +17,6 @@ export class LobbyScene extends Phaser.Scene {
 
         // Introduce Multiplayer
         this.socket = io();
-        this.registry.set('socket', this.socket);
         /*
             Key:    Socket Id (Int)
             Value: {
@@ -76,6 +75,7 @@ export class LobbyScene extends Phaser.Scene {
             .on('pointerout', () => this.enterButtonRestState() )
             .on('pointerdown', function() {
                 this.formUtil.hideElement("nameTextInput");
+                this.registry.set('socket', this.socket);
                 this.scene.start("SoloTierList");
             }, this );
     }

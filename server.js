@@ -50,9 +50,10 @@ io.on('connection', function (socket) {
   });
 
   socket.on('soloLockedIn', function (playerId, tierListData) {
-    console.log("In soloLockedIn: ", players);
     players[playerId].lockedIn = true;
     players[playerId].soloTierList = tierListData;
+    
+    console.log("In soloLockedIn: ", players);
     var waitingOn = [];
     for (const id in players) {
       if (!(players[playerId].lockedIn) && players[playerId].playerName) {
@@ -69,7 +70,17 @@ io.on('connection', function (socket) {
     }
     
   })
+  
+  socket.on('soloUnLockedIn', function (playerId) {
+    players[playerId].lockedIn = false;
+    players[playerId].soloTierList = null;
+    
+    console.log("In soloUnLockedIn: ", players);
+  })
+
 });
+
+
 
 server.listen(8081, function () {
   console.log(`Listening on ${server.address().port}`);

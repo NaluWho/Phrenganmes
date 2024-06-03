@@ -20,12 +20,13 @@ export class SoloTierListScene extends Phaser.Scene {
         this.tierRectWidth = this.width*0.09;
         this.offsetY = 84;
         this.rectContainers = [];
+        this.lockedIn = false;
 
         this.clickButton = this.add.text(this.width*0.5, this.height*0.9, 'Lock In', { fill: '#fff' })
                             .setOrigin(0.5,0.5)
                             .setInteractive()
-                            .on('pointerover', () => this.enterButtonHoverState() )
-                            .on('pointerout', () => this.enterButtonRestState() )
+                            .on('pointerover', () => this.clickButton.setStyle({ fill: '#ff0'}) )
+                            .on('pointerout', () => this.clickButton.setStyle({ fill: '#0f0' }) )
                             .on('pointerup', function() {
                                 this.lockIn();
                             }, this );
@@ -59,12 +60,15 @@ export class SoloTierListScene extends Phaser.Scene {
         // Displays each unlocked in player
         this.socket.on('waitingOn', function (waitingOnPlayersArr) {
             console.log("In waitingOn");
-            const namesBackRect = this.add.rectangle(this.width*0.5, this.height*0.5, this.width*0.25, this.height*0.25, 0xeeeeee).setOrigin(0.5, 0.5);
-            var textConfig = { fontSize: '18px', color:'#111111', fontFamily: 'Arial', textAlign: 'center' };
+            var namesBackRect = self.add.rectangle(self.width*0.5, self.height*0.5, self.width*0.5, self.height*0.25, 0xdddddd).setOrigin(0.5, 0.5);
+            var nameTextConfig = { fontSize: '18px', color:'#111111', fontFamily: 'Arial', textAlign: 'center' };
             var numWaitingOnPlayers = waitingOnPlayersArr.length;
             for (let i=0; i<numWaitingOnPlayers; i++) {
                 console.log("   Waiting on Player: ", waitingOnPlayersArr[i]);
-                var waitingOnNameText = this.add.text(this.width*(i/numWaitingOnPlayers), this.height*0.5, waitingOnPlayersArr[i], textConfig).setOrigin(0.5, 0.5);
+                var nameTextX = self.width*((i+1)/(numWaitingOnPlayers+1));
+                var nameTextY = self.height*0.55;
+                var waitingOnNameText = self.add.text(nameTextX, nameTextY, waitingOnPlayersArr[i], nameTextConfig).setOrigin(0.5, 0.5);
+                console.log("Text: ", waitingOnNameText);
             }
         })
 
@@ -170,9 +174,13 @@ export class SoloTierListScene extends Phaser.Scene {
                     
                     // If all players tiered, allow finish
                     if (this.tierListData.getTierListArrayByLetter().length == 0) {
-                        this.showLockInButton();
+                        this.clickButton.visible = true;
                     } else {
-                        this.hideLockInButton();
+                        this.clickButton.visible = false;
+                        if (this.lockedIn) {
+                            this.lockedIn = false;
+                            this.socket.emit("soloUnLockedIn", this.socket.id);
+                        }
                     }
                 }
                 console.log("Tierlist: ", this.tierListData);
@@ -265,25 +273,10 @@ export class SoloTierListScene extends Phaser.Scene {
         return cont.list[1]._text;
     }
 
-    showLockInButton() {
-        this.clickButton.visible = true;
-    }
-    
-    hideLockInButton() {
-        this.clickButton.visible = false;
-    }
-
-    enterButtonHoverState() {
-        this.clickButton.setStyle({ fill: '#ff0'});
-    }
-
-    enterButtonRestState() {
-        this.clickButton.setStyle({ fill: '#0f0' });
-    }
-
     lockIn() {
         console.log("Emitting soloLockedIn");
         this.socket.emit("soloLockedIn", this.socket.id, this.tierListData);
+        this.lockedIn = true;
         // TODO: only go to next scene if everyone locked in
         // this.scene.start("CombinedResults");
     }
