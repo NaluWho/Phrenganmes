@@ -9,10 +9,10 @@ export class SoloTierListScene extends Phaser.Scene {
         console.log('SoloTierList scene was created');
         var promptIndex = 0;
         
-        this.socket = io();
-        this.allPlayers = {};
+        this.socket = this.registry.get('socket');
         this.socket.emit('newScene', this.socket.id);
         
+        this.allPlayers = {};
         this.tierListData = new TierListData();
         this.height = this.cameras.main.height;
         this.width = this.cameras.main.width;
@@ -55,6 +55,18 @@ export class SoloTierListScene extends Phaser.Scene {
             }
 
         });
+
+        // Displays each unlocked in player
+        this.socket.on('waitingOn', function (waitingOnPlayersArr) {
+            console.log("In waitingOn");
+            const namesBackRect = this.add.rectangle(this.width*0.5, this.height*0.5, this.width*0.25, this.height*0.25, 0xeeeeee).setOrigin(0.5, 0.5);
+            var textConfig = { fontSize: '18px', color:'#111111', fontFamily: 'Arial', textAlign: 'center' };
+            var numWaitingOnPlayers = waitingOnPlayersArr.length;
+            for (let i=0; i<numWaitingOnPlayers; i++) {
+                console.log("   Waiting on Player: ", waitingOnPlayersArr[i]);
+                var waitingOnNameText = this.add.text(this.width*(i/numWaitingOnPlayers), this.height*0.5, waitingOnPlayersArr[i], textConfig).setOrigin(0.5, 0.5);
+            }
+        })
 
         // Prompt Text
         var promptTextConfig = { fontSize: '30px', color:'#eeeeee', fontFamily: 'Arial', textAlign: '' };
@@ -270,8 +282,9 @@ export class SoloTierListScene extends Phaser.Scene {
     }
 
     lockIn() {
-        // TODO create next scene and function
+        console.log("Emitting soloLockedIn");
         this.socket.emit("soloLockedIn", this.socket.id, this.tierListData);
-        this.scene.start("CombinedResults");
+        // TODO: only go to next scene if everyone locked in
+        // this.scene.start("CombinedResults");
     }
 }

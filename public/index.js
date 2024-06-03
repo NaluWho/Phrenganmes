@@ -24,7 +24,8 @@ var config = {
     Preloader,
     TitleScene,
     LobbyScene,
-    SoloTierListScene
+    SoloTierListScene,
+    CombinedResults
   ]
 };
 

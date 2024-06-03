@@ -5,7 +5,7 @@ export class CombinedResults extends Phaser.Scene {
     }
 
     create() {
-        console.log('CombinedResults...');
+        console.log('CombinedResults scene was created');
 
     }
 

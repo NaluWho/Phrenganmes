@@ -17,6 +17,7 @@ export class LobbyScene extends Phaser.Scene {
 
         // Introduce Multiplayer
         this.socket = io();
+        this.registry.set('socket', this.socket);
         /*
             Key:    Socket Id (Int)
             Value: {

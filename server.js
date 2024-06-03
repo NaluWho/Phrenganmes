@@ -9,6 +9,8 @@ var io = new Server(server);
   Key:  Socket Id (Int)
   Data:
         playerName: Name (String)
+        lockedIn: Has Player Locked in SoloTierList (Boolean)
+        soloTierList: SoloTierList Data (tierListData Object)
 */ 
 var players = {};
 
@@ -22,7 +24,9 @@ io.on('connection', function (socket) {
   console.log('a user connected: ', socket.id);
   // create a new player and add it to our players object
   players[socket.id] = {
-    playerName: ""
+    playerName: "",
+    lockedIn: false,
+    soloTierList: null
   };
   socket.emit('currentPlayers', players);
   socket.broadcast.emit('newPlayer', players[socket.id], socket.id);
@@ -44,6 +48,27 @@ io.on('connection', function (socket) {
   socket.on('newScene', function () {
     socket.emit('newSoloTier', players);
   });
+
+  socket.on('soloLockedIn', function (playerId, tierListData) {
+    console.log("In soloLockedIn: ", players);
+    players[playerId].lockedIn = true;
+    players[playerId].soloTierList = tierListData;
+    var waitingOn = [];
+    for (const id in players) {
+      if (!(players[playerId].lockedIn) && players[playerId].playerName) {
+        waitingOn.push(players[playerId].playerName);
+      }
+    }
+    console.log("Waiting On: ", waitingOn);
+
+    if (waitingOn.length) {
+      socket.emit('waitingOn', waitingOn);
+    } else {
+      // TODO Calculate combined tierlist
+      console.log("No one waiting");
+    }
+    
+  })
 });
 
 server.listen(8081, function () {
