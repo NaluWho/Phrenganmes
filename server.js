@@ -56,8 +56,8 @@ io.on('connection', function (socket) {
     console.log("In soloLockedIn: ", players);
     var waitingOn = [];
     for (const id in players) {
-      if (!(players[playerId].lockedIn) && players[playerId].playerName) {
-        waitingOn.push(players[playerId].playerName);
+      if (!(players[id].lockedIn) && players[id].playerName) {
+        waitingOn.push(players[id].playerName);
       }
     }
     console.log("Waiting On: ", waitingOn);
