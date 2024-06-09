@@ -61,6 +61,9 @@ export class SoloTierListScene extends Phaser.Scene {
         // Displays each un-locked-in player
         this.socket.on('waitingOn', function (waitingOnPlayersArr) {
             console.log("In waitingOn");
+            if (waitingOnPlayersArr.length == 0) {
+                self.scene.start("CombinedResults");
+            }
             self.waitingNamesBackRect.setVisible(true);
             self.waitingOnText.setVisible(true);
             var numWaitingOnPlayers = waitingOnPlayersArr.length;
@@ -283,8 +286,6 @@ export class SoloTierListScene extends Phaser.Scene {
         console.log("Emitting soloLockedIn");
         this.socket.emit("soloLockedIn", this.socket.id, this.tierListData);
         this.lockedIn = true;
-        // TODO: only go to next scene if everyone locked in
-        // this.scene.start("CombinedResults");
     }
 
     setUpWaitingOn() {

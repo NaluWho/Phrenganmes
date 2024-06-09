@@ -60,14 +60,13 @@ io.on('connection', function (socket) {
         waitingOn.push(players[id].playerName);
       }
     }
-    console.log("Waiting On: ", waitingOn);
 
-    if (waitingOn.length) {
-      socket.emit('waitingOn', waitingOn);
-    } else {
+    console.log("Waiting On: ", waitingOn);
+    if (waitingOn.length == 0) {
       // TODO Calculate combined tierlist
       console.log("No one waiting");
     }
+    socket.emit('waitingOn', waitingOn);
     
   })
   
