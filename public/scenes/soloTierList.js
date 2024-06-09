@@ -21,6 +21,7 @@ export class SoloTierListScene extends Phaser.Scene {
         this.offsetY = 84;
         this.rectContainers = [];
         this.lockedIn = false;
+        this.setUpWaitingOn();
 
         this.clickButton = this.add.text(this.width*0.5, this.height*0.9, 'Lock In', { fill: '#fff' })
                             .setOrigin(0.5,0.5)
@@ -57,18 +58,20 @@ export class SoloTierListScene extends Phaser.Scene {
 
         });
 
-        // Displays each unlocked in player
+        // Displays each un-locked-in player
         this.socket.on('waitingOn', function (waitingOnPlayersArr) {
             console.log("In waitingOn");
-            var namesBackRect = self.add.rectangle(self.width*0.5, self.height*0.5, self.width*0.5, self.height*0.25, 0xdddddd).setOrigin(0.5, 0.5);
-            var nameTextConfig = { fontSize: '18px', color:'#111111', fontFamily: 'Arial', textAlign: 'center' };
+            self.waitingNamesBackRect.setVisible(true);
+            self.waitingOnText.setVisible(true);
             var numWaitingOnPlayers = waitingOnPlayersArr.length;
             for (let i=0; i<numWaitingOnPlayers; i++) {
                 console.log("   Waiting on Player: ", waitingOnPlayersArr[i]);
                 var nameTextX = self.width*((i+1)/(numWaitingOnPlayers+1));
                 var nameTextY = self.height*0.55;
-                var waitingOnNameText = self.add.text(nameTextX, nameTextY, waitingOnPlayersArr[i], nameTextConfig).setOrigin(0.5, 0.5);
-                console.log("Text: ", waitingOnNameText);
+                var waitingOnNameText = self.add.text(nameTextX, nameTextY, waitingOnPlayersArr[i], self.waitingNameTextConfig)
+                                                        .setOrigin(0.5, 0.5)
+                                                        .setDepth(1);
+                self.waitingOnNameArray.push(waitingOnNameText);
             }
         })
 
@@ -177,6 +180,9 @@ export class SoloTierListScene extends Phaser.Scene {
                         this.clickButton.visible = true;
                     } else {
                         this.clickButton.visible = false;
+                        this.waitingNamesBackRect.setVisible(false);
+                        this.waitingOnText.setVisible(false);
+                        this.setWaitingOnToInvisible();
                         if (this.lockedIn) {
                             this.lockedIn = false;
                             this.socket.emit("soloUnLockedIn", this.socket.id);
@@ -279,5 +285,28 @@ export class SoloTierListScene extends Phaser.Scene {
         this.lockedIn = true;
         // TODO: only go to next scene if everyone locked in
         // this.scene.start("CombinedResults");
+    }
+
+    setUpWaitingOn() {
+        this.waitingNamesBackRect = this.add.rectangle(this.width*0.5, this.height*0.5, this.width*0.5, this.height*0.25, 0xdddddd)
+                                                        .setOrigin(0.5, 0.5)
+                                                        .setDepth(1);
+        this.waitingNameTextConfig = { fontSize: '18px', color:'#111111', fontFamily: 'Arial', textAlign: 'center' };
+        this.waitingOnText =  this.add.text(this.width*0.5, this.height*0.45, "Waiting On:", this.waitingNameTextConfig)
+                                            .setOrigin(0.5, 0.5)
+                                            .setDepth(1);
+        this.waitingOnNameArray = [];
+        
+        // Set not visible until locked in
+        this.waitingNamesBackRect.setVisible(false);
+        this.waitingOnText.setVisible(false);
+    }
+
+    setWaitingOnToInvisible() {
+        for (var i=0; i<this.waitingOnNameArray.length; i++) {
+            this.waitingOnNameArray[i].setVisible(false);
+        }
+        // Empty Array
+        this.waitingOnNameArray = [];
     }
 }
