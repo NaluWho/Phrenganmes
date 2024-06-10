@@ -75,7 +75,15 @@ io.on('connection', function (socket) {
     players[playerId].lockedIn = false;
     players[playerId].soloTierList = null;
     
-    console.log("In soloUnLockedIn: ", players);
+    var waitingOn = [];
+    for (const id in players) {
+      if (!(players[id].lockedIn) && players[id].playerName) {
+        waitingOn.push(players[id].playerName);
+      }
+    }
+
+    console.log("In soloUnLockedIn: ", waitingOn);
+    socket.broadcast.emit('waitingOn', waitingOn, playerId);
   })
 
 });
