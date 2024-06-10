@@ -55,15 +55,24 @@ export class SoloTierListScene extends Phaser.Scene {
                     widthOffset++;
                 }
             }
-
         });
 
         // Displays each un-locked-in player
-        this.socket.on('waitingOn', function (waitingOnPlayersArr) {
+        this.socket.on('waitingOn', function (waitingOnPlayersArr, playerId) {
             console.log("In waitingOn");
+            if (!self.lockedIn) {
+                return;
+            }
+
             if (waitingOnPlayersArr.length == 0) {
                 self.scene.start("CombinedResults");
             }
+
+            // If another player locks in update waiting on list
+            if (playerId != self.socket.id) {
+                self.setWaitingOnToInvisible();
+            }
+
             self.waitingNamesBackRect.setVisible(true);
             self.waitingOnText.setVisible(true);
             var numWaitingOnPlayers = waitingOnPlayersArr.length;

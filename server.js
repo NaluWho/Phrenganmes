@@ -66,7 +66,8 @@ io.on('connection', function (socket) {
       // TODO Calculate combined tierlist
       console.log("No one waiting");
     }
-    socket.emit('waitingOn', waitingOn);
+    socket.emit('waitingOn', waitingOn, playerId);
+    socket.broadcast.emit('waitingOn', waitingOn, playerId);
     
   })
   
