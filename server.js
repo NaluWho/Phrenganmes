@@ -49,17 +49,19 @@ io.on('connection', function (socket) {
     socket.emit('newSoloTier', players);
   });
 
+  socket.on('soloUnLockedIn', function (playerId) {
+    players[playerId].lockedIn = false;
+    players[playerId].soloTierList = null;
+    
+    var waitingOn = getUnlockedPlayers(players);
+    socket.broadcast.emit('waitingOn', waitingOn, playerId);
+  })
+  
   socket.on('soloLockedIn', function (playerId, tierListData) {
     players[playerId].lockedIn = true;
     players[playerId].soloTierList = tierListData;
     
-    console.log("In soloLockedIn: ", players);
-    var waitingOn = [];
-    for (const id in players) {
-      if (!(players[id].lockedIn) && players[id].playerName) {
-        waitingOn.push(players[id].playerName);
-      }
-    }
+    var waitingOn = getUnlockedPlayers(players);
 
     console.log("Waiting On: ", waitingOn);
     if (waitingOn.length == 0) {
@@ -71,25 +73,20 @@ io.on('connection', function (socket) {
     
   })
   
-  socket.on('soloUnLockedIn', function (playerId) {
-    players[playerId].lockedIn = false;
-    players[playerId].soloTierList = null;
-    
-    var waitingOn = [];
-    for (const id in players) {
-      if (!(players[id].lockedIn) && players[id].playerName) {
-        waitingOn.push(players[id].playerName);
-      }
-    }
-
-    console.log("In soloUnLockedIn: ", waitingOn);
-    socket.broadcast.emit('waitingOn', waitingOn, playerId);
-  })
 
 });
-
-
 
 server.listen(8081, function () {
   console.log(`Listening on ${server.address().port}`);
 });
+
+function getUnlockedPlayers(players) {
+  var waitingOn = [];
+
+  for (const id in players) {
+    if (!(players[id].lockedIn) && players[id].playerName) {
+      waitingOn.push(players[id].playerName);
+    }
+  }
+  return waitingOn;
+}
