@@ -73,6 +73,7 @@ export class SoloTierListScene extends Phaser.Scene {
                 self.setWaitingOnToInvisible();
             }
 
+            self.clickButton.setText("Un-lock In");
             self.waitingNamesBackRect.setVisible(true);
             self.waitingOnText.setVisible(true);
             var numWaitingOnPlayers = waitingOnPlayersArr.length;
@@ -171,8 +172,6 @@ export class SoloTierListScene extends Phaser.Scene {
                 if (oldTier != newTier || oldIndex != newIndex) {
                     var newTierArrLength = this.tierListData.getTierListArrayByLetter(newTier).length;
                     
-                    // console.log("   removing ", givenUsername, " from tier ", oldTier, "[", oldIndex, "]");
-                    // console.log("   adding ", givenUsername, " to tier ", newTier, "[", newIndex, "]");
                     this.tierListData.removeFromTier(givenUsername);
                     this.tierListData.addToTier(newTier, givenUsername, newIndex);
                     
@@ -187,8 +186,9 @@ export class SoloTierListScene extends Phaser.Scene {
                         this.shiftRectsLeft(oldTier, oldIndex, givenUsername);
                     }
                     
-                    // If all players tiered, allow finish
+                    // If no players untiered, allow finish
                     if (this.tierListData.getTierListArrayByLetter().length == 0) {
+                        this.clickButton.setText("Lock In");
                         this.clickButton.visible = true;
                     } else {
                         this.clickButton.visible = false;
@@ -292,9 +292,19 @@ export class SoloTierListScene extends Phaser.Scene {
     }
 
     lockIn() {
-        console.log("Emitting soloLockedIn");
-        this.socket.emit("soloLockedIn", this.socket.id, this.tierListData);
-        this.lockedIn = true;
+        // If already locked in then unlock
+        if (this.lockedIn) {
+            this.waitingNamesBackRect.setVisible(false);
+            this.waitingOnText.setVisible(false);
+            this.setWaitingOnToInvisible();
+            this.clickButton.setText("Lock In");
+            this.socket.emit("soloUnLockedIn", this.socket.id);
+            this.lockedIn = false;
+        } else {
+            console.log("Emitting soloLockedIn");
+            this.socket.emit("soloLockedIn", this.socket.id, this.tierListData);
+            this.lockedIn = true;
+        }
     }
 
     setUpWaitingOn() {
