@@ -53,3 +53,5 @@ class TierListData {
         tierListArr.splice(nameIndex, 1);
     }
 }
+
+module.exports = TierListData;

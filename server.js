@@ -4,6 +4,7 @@ var http = require('http');
 var server = http.Server(app);
 var { Server } = require("socket.io");
 var io = new Server(server);
+var TierListData = require("./public/util/tierListData.js");
 
 /* 
   Key:  Socket Id (Int)
@@ -70,15 +71,18 @@ io.on('connection', function (socket) {
     }
     socket.emit('waitingOn', waitingOn, playerId);
     socket.broadcast.emit('waitingOn', waitingOn, playerId);
-    
   })
-  
 
+  socket.on('combinedResults', function () {
+    console.log("Calculating Combined Results...");
+    calculateCombinedResults(players);
+  })
 });
 
 server.listen(8081, function () {
   console.log(`Listening on ${server.address().port}`);
 });
+
 
 function getUnlockedPlayers(players) {
   var waitingOn = [];
@@ -89,4 +93,22 @@ function getUnlockedPlayers(players) {
     }
   }
   return waitingOn;
+}
+
+function calculateCombinedResults(players) {
+    const tierWeights = {
+        "S": 100,
+        "A": 80,
+        "B": 60,
+        "C": 40,
+        "D": 20,
+        "F": 0
+    };
+    console.log("TierlistData: ", TierListData);
+    var combinedTierList = new TierListData();
+
+    for (const id in players) {
+        // Assign weight to each player
+        console.log("Id", id);
+    }
 }
