@@ -35,7 +35,6 @@ export class SoloTierListScene extends Phaser.Scene {
         
         this.socket.on('newSoloTier', function (players) {
             self.allPlayers = players;
-            self.allPlayers["socketIdEx"] = {playerName: "testUser"}; // For testing
 
             // Tier Rectangles
             self.createTierLayout();
