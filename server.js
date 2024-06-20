@@ -66,7 +66,6 @@ io.on('connection', function (socket) {
 
     console.log("Waiting On: ", waitingOn);
     if (waitingOn.length == 0) {
-      // TODO Calculate combined tierlist
       console.log("No one waiting");
     }
     socket.emit('waitingOn', waitingOn, playerId);
@@ -104,11 +103,40 @@ function calculateCombinedResults(players) {
         "D": 20,
         "F": 0
     };
-    console.log("TierlistData: ", TierListData);
     var combinedTierList = new TierListData();
+    // Key: PlayerName
+    // Value: Summed Weight (Int)
+    var playersByRating = {};
+    Object.entries(players).forEach(([key, value]) => {
+      playersByRating[players[key].playerName] = 0;
+    })
 
+    // Get each player's solo tier list
     for (const id in players) {
-        // Assign weight to each player
-        console.log("Id", id);
+      var rankerName = players[id].playerName;
+      // Assign weight to each player
+      var soloList = players[id].soloTierList;
+      var individualTierList = new TierListData(
+        soloList.sTier,
+        soloList.aTier,
+        soloList.bTier,
+        soloList.cTier,
+        soloList.dTier,
+        soloList.fTier
+      );
+
+      // Check each tier
+      for (const [tierLetter, tierWeightValue] of Object.entries(tierWeights)) {
+        var playersInTier = individualTierList.getTierListArrayByLetter(tierLetter);
+        console.log("In tier", tierLetter, " Players: ", playersInTier);
+        // Per person in tier, update rating
+        for (var i=0; i<playersInTier.length; i++) {
+          var rankedName = playersInTier[i];
+          playersByRating[rankedName] += tierWeightValue;
+        }
+      }
     }
+
+    // TODO: convert combined players ratings into new tierlist
+    console.log("Players Combined Ratings: ", playersByRating);
 }

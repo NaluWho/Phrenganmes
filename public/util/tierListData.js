@@ -1,12 +1,12 @@
 class TierListData {
-    constructor() {
-        this.sTier = [];
-        this.aTier = [];
-        this.bTier = [];
-        this.cTier = [];
-        this.dTier = [];
-        this.fTier = [];
-        this.untiered = [];
+    constructor(sTier = [], aTier = [], bTier = [], cTier = [], dTier = [], fTier = [], untiered = []) {
+        this.sTier = sTier;
+        this.aTier = aTier;
+        this.bTier = bTier;
+        this.cTier = cTier;
+        this.dTier = dTier;
+        this.fTier = fTier;
+        this.untiered = untiered;
         this.nameToTier = {};
     }
 
