@@ -103,7 +103,6 @@ function calculateCombinedResults(players) {
         "D": 20,
         "F": 0
     };
-    var combinedTierList = new TierListData();
     // Key: PlayerName
     // Value: Summed Weight (Int)
     var playersByRating = {};
@@ -113,7 +112,6 @@ function calculateCombinedResults(players) {
 
     // Get each player's solo tier list
     for (const id in players) {
-      var rankerName = players[id].playerName;
       // Assign weight to each player
       var soloList = players[id].soloTierList;
       var individualTierList = new TierListData(
@@ -136,6 +134,33 @@ function calculateCombinedResults(players) {
         }
       }
     }
+
+    // Sort players into tiers by average ratings
+    var combinedTierList = new TierListData();
+    const numOfPlayers = Object.keys(playersByRating).length;
+    for (const [name, rating] of Object.entries(playersByRating)) {
+      var avgRating = playersByRating[name] / numOfPlayers;
+      if (avgRating > 78) {
+        combinedTierList.addToTier("S", name);
+      }
+      else if (avgRating > 62) {
+        combinedTierList.addToTier("A", name);
+      }
+      else if (avgRating > 50) {
+        combinedTierList.addToTier("B", name);
+      }
+      else if (avgRating > 38) {
+        combinedTierList.addToTier("C", name);
+      }
+      else if (avgRating > 22) {
+        combinedTierList.addToTier("D", name);
+      }
+      else {
+        combinedTierList.addToTier("F", name);
+      }
+    }
+
+    console.log(combinedTierList);
 
     // TODO: convert combined players ratings into new tierlist
     console.log("Players Combined Ratings: ", playersByRating);
