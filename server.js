@@ -161,7 +161,4 @@ function calculateCombinedResults(players) {
     }
 
     console.log(combinedTierList);
-
-    // TODO: convert combined players ratings into new tierlist
-    console.log("Players Combined Ratings: ", playersByRating);
 }
