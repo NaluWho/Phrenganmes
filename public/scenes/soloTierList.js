@@ -37,7 +37,7 @@ export class SoloTierListScene extends Phaser.Scene {
             self.allPlayers = players;
 
             // Tier Rectangles
-            self.createTierLayout();
+            self.createTierLayout(self);
 
             // Create Draggable Rect for each Player
             var widthOffset = 0;
@@ -93,9 +93,9 @@ export class SoloTierListScene extends Phaser.Scene {
 
     }
 
-    createTierLayout() {
+    createTierLayout(phaserThis) {
         var numberOfTiers = 6;
-        var startY = this.height/4;
+        var startY = phaserThis.height/4;
 
         // Tier Rectangles
         var tierRectColor = 0xadadad;
@@ -105,7 +105,7 @@ export class SoloTierListScene extends Phaser.Scene {
             } else {
                 tierRectColor = 0xeeeeee;
             }
-            this.add.rectangle(this.width/2, startY+this.tierRectHeight*i, this.width*0.9, this.tierRectHeight, tierRectColor);
+            phaserThis.add.rectangle(phaserThis.width/2, startY+phaserThis.tierRectHeight*i, phaserThis.width*0.9, phaserThis.tierRectHeight, tierRectColor);
         }
 
         // Tier Letters Boxes
@@ -114,7 +114,7 @@ export class SoloTierListScene extends Phaser.Scene {
             console.log("ERROR: Number of Tier Letter Boxes not same as number of tiers.");
         }
         for (let i = 0; i < tierLetterBoxColorArray.length; i++) {
-            this.add.rectangle(this.width*0.0955, startY+this.tierRectHeight*i, this.width*0.09, this.tierRectHeight, tierLetterBoxColorArray[i]);
+            phaserThis.add.rectangle(phaserThis.width*0.0955, startY+phaserThis.tierRectHeight*i, phaserThis.width*0.09, phaserThis.tierRectHeight, tierLetterBoxColorArray[i]);
         }
 
         // Tier Letters
@@ -124,7 +124,7 @@ export class SoloTierListScene extends Phaser.Scene {
         }
         var tierLetterConfig = { fontSize: '30px', color:'#000', fontFamily: 'Arial', textAlign: 'center' };
         for (let i = 0; i < tierLetterArray.length; i++) {
-            this.add.text(this.width*0.0955, startY+this.tierRectHeight*i, tierLetterArray[i], tierLetterConfig).setOrigin(0.5,0.5);
+            phaserThis.add.text(phaserThis.width*0.0955, startY+phaserThis.tierRectHeight*i, tierLetterArray[i], tierLetterConfig).setOrigin(0.5,0.5);
         }
     }
 
